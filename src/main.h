@@ -10,8 +10,10 @@
 #define WINDOW_HEIGHT 1080
 #define SDL_FLAGS SDL_INIT_EVERYTHING
 #define IMG_FLAGS IMG_INIT_PNG 
-extern bool right, left, down, up;
-extern double angle;
+extern bool right, left, down, up, firegun;
+extern double angle, angle_rad, bulangle;
+extern int i, count;
+extern float Vx, Vy;
 
 /* PLACEHOLDER FOR FUTURE ENEMY STRUCT */
 
@@ -20,7 +22,10 @@ struct Game {
   SDL_Renderer *renderer;
   SDL_Texture *player_image;
   SDL_Texture *background_image;
+  SDL_Texture *plasma_image;
   SDL_Rect player_rect;
+  SDL_Rect bullet_dist;
+  SDL_Rect plasma_rect[2];
   int player_xvol;
   int player_yvol;
   int img_init;

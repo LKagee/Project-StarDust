@@ -102,8 +102,19 @@ bool sdl_loadmedia(struct Game *game) {
     return true;
   }
 
+  game->plasma_image = IMG_LoadTexture(game->renderer, "../images/bullet.png");
+  if(!game->plasma_image) {
+    fprintf(stderr, "Error loading plasma texture: %s", IMG_GetError() );
+    return true;
+  }
+
   if(SDL_QueryTexture(game->player_image, NULL, NULL, &game->player_rect.w, &game->player_rect.h)) {
     fprintf(stderr, "Error querying player texture: %s", SDL_GetError() );
+    return true;
+  }
+
+  if(SDL_QueryTexture(game->plasma_image, NULL, NULL, &game->plasma_rect[2].w, &game->plasma_rect[2].h)) {
+    fprintf(stderr, "Error querying plasma texture: %s", SDL_GetError() );
     return true;
   }
   
@@ -112,7 +123,6 @@ bool sdl_loadmedia(struct Game *game) {
 
 void directionv1(struct Game *game) {
 int mouse_x, mouse_y;
-double angle_rad;
 SDL_GetMouseState(&mouse_x, &mouse_y);
 double delta_y = mouse_y - game->player_rect.y;
 double delta_x = mouse_x - game->player_rect.x;
@@ -120,7 +130,7 @@ double delta_x = mouse_x - game->player_rect.x;
 angle_rad = atan2(delta_y, delta_x);
 angle = angle_rad * (180.0 / M_PI);
 angle += 90;
-printf("%d\n", angle);
+//printf("%d\n", angle);
 }
 // Maybe for later use
 void directionv2(struct Game *game) {
@@ -135,6 +145,43 @@ void directionv2(struct Game *game) {
   mag2 = sqrt(x2*x2 + y2*y2);
   cosine = dotproduct / mag1*mag2;
   angle = (acos(cosine)*180.00000) / 3.141592;
-  printf("%.2f", angle);
+  //printf("%.2f", angle);
 }
 
+void directionbullet(struct Game *game) {
+  if(i == 0) {
+  
+  game->plasma_rect[i].x += Vx;
+  game->plasma_rect[i].y += Vy;
+  }
+
+  if(i == 1) {
+  game->bullet_dist.x = game->player_rect.x + 25;
+  game->bullet_dist.y = game->player_rect.y + 40;
+ }
+}
+
+void weapons_handling(struct Game *game) {
+  Vx = 20 * cos(angle_rad);
+  Vy = 20 * sin(angle_rad);
+}
+
+bool check(struct Game *game) {
+ if(game->plasma_rect[i].x + game->plasma_rect[i].w > WINDOW_WIDTH) {
+    return true;
+  }
+
+if(game->plasma_rect[i].x < 0) {
+    return true;
+  }
+
+if(game->plasma_rect[i].y + game->plasma_rect[i].w > WINDOW_HEIGHT) {
+    return true;
+  }
+
+if(game->plasma_rect[i].y < 0) {
+    return true;
+  }
+
+  return false;
+}
