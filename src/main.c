@@ -1,16 +1,24 @@
 #include "main.h"
 #include "game.h"
 
-bool sdl_init(struct Game *game);
-void sdl_cleanup(struct Game *game, int exit_status);
-bool sdl_loadmedia(struct Game *game);
-void update_sprite(struct Game *game);
-void update_enemy1(struct Game *game); // Decleration of future A.I behavior
-void directionv1(struct Game *game);
-void directionv2(struct Game *game); // For later
-void directionbullet(struct Game *game);
-void weapons_handling(struct Game *game);
-bool check(struct Game *game);
+bool sdl_init(Game *game);
+void sdl_cleanup(Game *game, int exit_status);
+bool sdl_loadmedia(Game *game);
+void update_sprite(Game *game);
+void update_enemy1(Game *game); // Decleration of future A.I behavior
+void directionv1(Game *game);
+void directionv2(Game *game); // For later
+void directionbullet(Game *game);
+void weapons_handling(Game *game);
+// bool check(Game* game);
+
+Bullet* AllocBullet(Game* game);
+void DeallocBullet(Game* game, int bulletIndex);
+void CreateBullet(Game* game);
+void updateBullets(Game* game);
+void renderBullets(Game* game);
+
+
 double angle = 0;
 double angle_rad = 0;
 double bulangle = 0;
@@ -21,33 +29,36 @@ int count = 0;
 float Vx, Vy = 0;
 
 int main()
-{
+{  
+    Game game;
+    game.keystate = SDL_GetKeyboardState(NULL);
 
-struct Game game = {
-    .window = NULL,
-    .renderer = NULL,
-    .img_init = 0,
-    .player_image = NULL,
-    .background_image = NULL,
-    .plasma_image = NULL,
-    .player_rect = {0, 0, 0, 0},
-    .bullet_dist = {0, 100, 50, 50},
+
+    /* game.window = NULL,
+    game.renderer = NULL,
+    game.img_init = 0,
+    game.player_image = NULL,
+    game.background_image = NULL,
+    game.plasma_image = NULL,
+    game.player_rect = {0, 0, 0, 0},
+    game.bullet_dist = {0, 100, 50, 50},
    // .plasma_rect = {0, 0, 0, 0},
 
-    .plasma_rect[0].x = 0,
-    .plasma_rect[0].y = 0,
-    .plasma_rect[0].h = 50,
-    .plasma_rect[0].w = 50,
+    game.plasma_rect[0].x = 0,
+    game.plasma_rect[0].y = 0,
+    game.plasma_rect[0].h = 50,
+    game.plasma_rect[0].w = 50,
 
-    .plasma_rect[1].x = 0,
-    .plasma_rect[1].y = 100,
-    .plasma_rect[1].h = 50,
-    .plasma_rect[1].w = 50,
+    game.plasma_rect[1].x = 0,
+    game.plasma_rect[1].y = 100,
+    game.plasma_rect[1].h = 50,
+    game.plasma_rect[1].w = 50,
 
-    .player_xvol = 5,
-    .player_yvol = 5,
-    .keystate = SDL_GetKeyboardState(NULL),
-  };
+    game.player_xvol = 5, 
+    game.player_yvol = 5,
+    game.keystate = SDL_GetKeyboardState(NULL),
+    
+  */
   
   if(sdl_init(&game)) {
     sdl_cleanup(&game, EXIT_FAILURE);
@@ -75,7 +86,7 @@ struct Game game = {
         case SDL_KEYDOWN: {
           switch(event.key.keysym.sym) {
             case SDLK_ESCAPE: {sdl_cleanup(&game, EXIT_SUCCESS); break;}
-            case SDLK_SPACE: {i = 0; printf("%d\n", i); break;}
+            case SDLK_SPACE: {CreateBullet(&game); i = 0; printf("%d\n", i); break;}
           }
         }
       }
@@ -83,12 +94,15 @@ struct Game game = {
 
    
   update_sprite(&game);
-  directionv1(&game);
+  //directionv1(&game);
   directionbullet(&game);
+
+  updateBullets(&game);
   SDL_RenderClear(game.renderer);
+  renderBullets(&game);
   SDL_RenderCopy(game.renderer, game.background_image, NULL, NULL);
   SDL_RenderCopyEx(game.renderer, game.player_image, NULL, &game.player_rect, angle, NULL, SDL_FLIP_NONE);
-    if(i == 1) {
+   /* if(i == 1) {
   SDL_RenderCopyEx(game.renderer, game.plasma_image, &game.plasma_rect[i], &game.bullet_dist, angle - 90, NULL, SDL_FLIP_NONE);
    }
 
@@ -108,7 +122,7 @@ struct Game game = {
       Vx = 0;
       Vy = 0;
     }
-  } 
+  } */
 
   SDL_RenderPresent(game.renderer);
   SDL_Delay(16);

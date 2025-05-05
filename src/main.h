@@ -8,6 +8,8 @@
 #define WINDOW_NAME "StarDust"
 #define WINDOW_WIDTH 1920
 #define WINDOW_HEIGHT 1080
+#define BULLET_MAX 50
+#define BULLET_SPEED 5.0f
 #define SDL_FLAGS SDL_INIT_EVERYTHING
 #define IMG_FLAGS IMG_INIT_PNG 
 extern bool right, left, down, up, firegun;
@@ -17,7 +19,14 @@ extern float Vx, Vy;
 
 /* PLACEHOLDER FOR FUTURE ENEMY STRUCT */
 
-struct Game {
+typedef struct {
+  SDL_Texture *plasma_image;
+  SDL_Rect bullet_dist;
+  SDL_Rect plasma_rect;
+  bool alive;
+} Bullet;
+
+typedef struct {
   SDL_Window *window;
   SDL_Renderer *renderer;
   SDL_Texture *player_image;
@@ -30,7 +39,10 @@ struct Game {
   int player_yvol;
   int img_init;
   const Uint8 *keystate;
-};
+
+  int aliveBullets;
+  Bullet* bullets;
+} Game;
 
 
 
